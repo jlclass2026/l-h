@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bad Math Game - Obby Parkour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lava-red: #d90429;
+      --block-blue: #00b4d8;
+      --block-yellow: #ffb703;
+      --block-purple: #7209b7;
+      --bg: #10101a;
+      --text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: radial-gradient(circle at center, #1f1f38 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: 'Fredoka', sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      max-width: 900px;
+      margin: 0 auto 16px auto;
+      background: rgba(20, 20, 35, 0.9);
+      border: 3px solid var(--block-yellow);
+      border-radius: 18px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+    }
+
+    .brand-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      color: var(--block-yellow);
+      letter-spacing: 1px;
+      line-height: 1.4;
+    }
+
+    .tag-sub {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 12px;
+      color: #90e0ef;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .btn-cheese {
+      background: #ffd166;
+      border: 2px solid #e09f3e;
+      color: #332000;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.1s ease;
+    }
+
+    .btn-cheese:active {
+      transform: scale(0.92);
+    }
+
+    .game-window {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #18192a;
+      border: 4px solid #3a3b5c;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    /* PARKOUR VIEW */
+    .parkour-stage {
+      height: 260px;
+      background: linear-gradient(180deg, #1b263b 0%, #0d1b2a 75%, #d90429 95%, #9b2226 100%);
+      position: relative;
+      overflow: hidden;
+      border-bottom: 4px solid #2b2d42;
+    }
+
+    .lava-glow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 14px;
+      background: #ff5400;
+      box-shadow: 0 -4px 15px #ff5400;
+      animation: lavaFlicker 1.5s infinite alternate;
+    }
+
+    @keyframes lavaFlicker {
+      0% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    /* Blocks & Character */
+    .platforms-track {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 40px;
+    }
+
+    .block-step {
+      width: 70px;
+      height: 24px;
+      border-radius: 6px;
+      border: 3px solid #000;
+      background: #4cc9f0;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .block-step.cleared {
+      background: #52b788;
+    }
+
+    .block-step.final {
+      background: #ffd166;
+      border-color: #ff9f1c;
+    }
+
+    #blockDude {
+      position: absolute;
+      bottom: 64px;
+      left: 60px;
+      width: 44px;
+      height: 56px;
+      transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), bottom 0.2s ease;
+      z-index: 10;
+    }
+
+    .jumping {
+      animation: jumpArc 0.4s ease;
+    }
+
+    @keyframes jumpArc {
+      0% { bottom: 64px; }
+      50% { bottom: 120px; }
+      100% { bottom: 64px; }
+    }
+
+    /* HUD Controls */
+    .hud-controls {
+      padding: 24px 20px;
+      text-align: center;
+      background: #141424;
+    }
+
+    .step-indicator {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: #4cc9f0;
+      margin-bottom: 12px;
+    }
+
+    .sum-box {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 34px;
+      color: var(--block-yellow);
+      margin: 12px 0 16px 0;
+      letter-spacing: 2px;
+    }
+
+    .input-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .math-input {
+      width: 140px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 26px;
+      text-align: center;
+      padding: 10px;
+      background: #090a12;
+      border: 3px solid var(--block-blue);
+      border-radius: 12px;
+      color: #fff;
+      outline: none;
+    }
+
+    .btn-jump {
+      background: #52b788;
+      border: 3px solid #2d6a4f;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1b4332;
+    }
+
+    .btn-jump:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+
+    .feedback-text {
+      min-height: 24px;
+      margin-top: 14px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    /* BOSS D10 MODAL ARENA */
+    .boss-screen {
+      display: none;
+      padding: 28px 20px;
+      text-align: center;
+      background: radial-gradient(circle at center, #2e0811 0%, #120306 100%);
+    }
+
+    .boss-screen.active {
+      display: block;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .boss-title {
+      font-family: 'Press Start 2P', monospace;
+      color: #ff4d6d;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .dice-table {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin: 24px 0;
+    }
+
+    .dice-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 3px solid #4a192c;
+      border-radius: 18px;
+      padding: 18px 24px;
+      width: 170px;
+      text-align: center;
+    }
+
+    .dice-val {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 46px;
+      margin: 14px 0;
+      color: #ffd166;
+    }
+
+    .btn-roll {
+      background: #ff4d6d;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      padding: 16px 28px;
+      border: 3px solid #800f2f;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #590d22;
+    }
+
+    .btn-roll:active {
+      transform: translateY(6px);
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="brand-title">BAD MATH GAME</div>
+      <div class="tag-sub">Lukas &amp; Harrison &bull; Parkour Obby &amp; D10 Boss Fight</div>
+    </div>
+    <!-- Press Cheese to Leave from their drawing -->
+    <button class="btn-cheese" onclick="pressCheese()">&#129472; Press Cheese to Leave</button>
+  </header>
+
+  <div class="game-window">
+    
+    <!-- STAGE 1: PARKOUR OBBY -->
+    <div id="parkourView">
+      <div class="parkour-stage">
+        <!-- SVG Roblox Character -->
+        <div id="blockDude">
+          <svg viewBox="0 0 50 64" width="44" height="56">
+            <!-- Head -->
+            <rect x="15" y="4" width="20" height="18" rx="3" fill="#ffb703" stroke="#000" stroke-width="2"/>
+            <rect x="19" y="10" width="3" height="4" fill="#000"/>
+            <rect x="28" y="10" width="3" height="4" fill="#000"/>
+            <!-- Torso (Classic Blue Block Shirt) -->
+            <rect x="11" y="24" width="28" height="22" rx="2" fill="#0077b6" stroke="#000" stroke-width="2"/>
+            <!-- Left & Right Arm -->
+            <rect x="3" y="24" width="7" height="20" rx="2" fill="#ffb703" stroke="#000" stroke-width="2"/>
+            <rect x="40" y="24" width="7" height="20" rx="2" fill="#ffb703" stroke="#000" stroke-width="2"/>
+            <!-- Legs (Green Pants) -->
+            <rect x="13" y="48" width="10" height="14" rx="2" fill="#52b788" stroke="#000" stroke-width="2"/>
+            <rect x="27" y="48" width="10" height="14" rx="2" fill="#52b788" stroke="#000" stroke-width="2"/>
+          </svg>
+        </div>
+
+        <!-- 5 Parkour Blocks -->
+        <div class="platforms-track">
+          <div class="block-step cleared" id="step-0"></div>
+          <div class="block-step" id="step-1"></div>
+          <div class="block-step" id="step-2"></div>
+          <div class="block-step" id="step-3"></div>
+          <div class="block-step final" id="step-4">👑</div>
+        </div>
+
+        <div class="lava-glow"></div>
+      </div>
+
+      <div class="hud-controls">
+        <div class="step-indicator" id="jumpStatus">STAGE: JUMP 1 / 4 (DO SUMS TO JUMP)</div>
+        <div class="sum-box" id="sumDisplay">12 + 8 = ?</div>
+
+        <div class="input-row">
+          <input type="number" id="sumInput" class="math-input" autocomplete="off" placeholder="?">
+          <button class="btn-jump" onclick="tryJump()">JUMP!</button>
+        </div>
+
+        <div class="feedback-text" id="feedback"></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: D10 DICE THROW BOSS SCREEN -->
+    <div class="boss-screen" id="bossView">
+      <div class="boss-title">⚔️ FINAL BOSS: D10 DICE THROW ⚔️</div>
+      <p style="color: #ffb4a2; font-size: 15px; margin-top: -10px;">Highest number on the D10 wins!</p>
+
+      <div class="dice-table">
+        <div class="dice-card">
+          <div style="font-size: 13px; color: #4cc9f0; font-weight: 700;">PLAYER ROLL</div>
+          <div class="dice-val" id="playerDice">?</div>
+          <div style="font-size: 11px; color: #888;">10-Sided Die</div>
+        </div>
+
+        <div style="font-family: 'Press Start 2P', monospace; font-size: 22px; color: #ff4d6d;">VS</div>
+
+        <div class="dice-card">
+          <div style="font-size: 13px; color: #ff758f; font-weight: 700;">BOSS ROLL</div>
+          <div class="dice-val" id="bossDice">?</div>
+          <div style="font-size: 11px; color: #888;">10-Sided Die</div>
+        </div>
+      </div>
+
+      <button class="btn-roll" id="rollBtn" onclick="rollD10()">ROLL D10 DICE!</button>
+      <div class="feedback-text" id="bossFeedback" style="font-size: 17px; margin-top: 18px;"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 0; // 0 to 4
+    const totalSteps = 4;
+    let expectedSum = 0;
+
+    // Positions for dude on the 5 blocks
+    const dudePositions = [60, 240, 420, 600, 780];
+
+    function pressCheese() {
+      alert("🧀 Cheese Pressed! (As drawn on Lukas & Harrison's screen: 'Press cheese to leave' / 'help me')");
+    }
+
+    function generateSum() {
+      // Mixed Year 3 math: addition, subtraction, or times tables
+      const type = Math.floor(Math.random() * 3);
+      let n1, n2;
+
+      if (type === 0) {
+        // Addition
+        n1 = Math.floor(Math.random() * 40) + 10;
+        n2 = Math.floor(Math.random() * 30) + 5;
+        expectedSum = n1 + n2;
+        document.getElementById('sumDisplay').textContent = `${n1} + ${n2} = ?`;
+      } else if (type === 1) {
+        // Subtraction
+        n1 = Math.floor(Math.random() * 50) + 20;
+        n2 = Math.floor(Math.random() * (n1 - 10)) + 5;
+        expectedSum = n1 - n2;
+        document.getElementById('sumDisplay').textContent = `${n1} - ${n2} = ?`;
+      } else {
+        // Times tables
+        n1 = Math.floor(Math.random() * 8) + 2;
+        n2 = Math.floor(Math.random() * 10) + 1;
+        expectedSum = n1 * n2;
+        document.getElementById('sumDisplay').textContent = `${n1} × ${n2} = ?`;
+      }
+    }
+
+    function tryJump() {
+      const val = parseInt(document.getElementById('sumInput').value, 10);
+      const fb = document.getElementById('feedback');
+      const dude = document.getElementById('blockDude');
+
+      if (isNaN(val)) return;
+
+      if (val === expectedSum) {
+        currentStep++;
+        dude.classList.add('jumping');
+        dude.style.left = `${dudePositions[currentStep]}px`;
+
+        document.getElementById(`step-${currentStep}`).classList.add('cleared');
+        fb.style.color = '#52b788';
+        fb.textContent = 'Awesome jump! Parkour block cleared!';
+
+        setTimeout(() => {
+          dude.classList.remove('jumping');
+          if (currentStep >= totalSteps) {
+            triggerBossBattle();
+          } else {
+            document.getElementById('jumpStatus').textContent = `STAGE: JUMP ${currentStep + 1} / 4 (DO SUMS TO JUMP)`;
+            document.getElementById('sumInput').value = '';
+            generateSum();
+          }
+        }, 400);
+      } else {
+        fb.style.color = '#ff4d6d';
+        fb.textContent = `Missed jump! (Answer was ${expectedSum}) - Try again!`;
+        document.getElementById('sumInput').value = '';
+        generateSum();
+      }
+    }
+
+    function triggerBossBattle() {
+      document.getElementById('parkourView').style.display = 'none';
+      document.getElementById('bossView').classList.add('active');
+    }
+
+    function rollD10() {
+      const btn = document.getElementById('rollBtn');
+      btn.disabled = true;
+      const fb = document.getElementById('bossFeedback');
+      fb.textContent = "Rolling D10 against the Boss...";
+
+      // D10 rolls 1 to 10
+      let ticks = 0;
+      const interval = setInterval(() => {
+        document.getElementById('playerDice').textContent = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('bossDice').textContent = Math.floor(Math.random() * 10) + 1;
+        ticks++;
+
+        if (ticks > 12) {
+          clearInterval(interval);
+          const pRoll = Math.floor(Math.random() * 10) + 1;
+          const bRoll = Math.floor(Math.random() * 10) + 1;
+
+          document.getElementById('playerDice').textContent = pRoll;
+          document.getElementById('bossDice').textContent = bRoll;
+
+          if (pRoll > bRoll) {
+            fb.style.color = '#52b788';
+            fb.textContent = `🎉 VICTORY! Your ${pRoll} beat the Boss's ${bRoll}! You completed Bad Math Game!`;
+            btn.textContent = "PLAY AGAIN";
+            btn.disabled = false;
+            btn.onclick = () => location.reload();
+          } else if (pRoll < bRoll) {
+            fb.style.color = '#ff4d6d';
+            fb.textContent = `💀 The Boss rolled ${bRoll} and beat your ${pRoll}! Roll again!`;
+            btn.disabled = false;
+          } else {
+            fb.style.color = '#ffd166';
+            fb.textContent = `TIE at ${pRoll}! Roll again for the win!`;
+            btn.disabled = false;
+          }
+        }
+      }, 70);
+    }
+
+    document.getElementById('sumInput').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') tryJump();
+    });
+
+    generateSum();
+  </script>
+</body>
+</html>
