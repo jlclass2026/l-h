@@ -6,14 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --lava-red: #d90429;
-      --block-blue: #00b4d8;
-      --block-yellow: #ffb703;
-      --block-purple: #7209b7;
-      --bg: #10101a;
+      --lava-top: #ff7b00;
+      --lava-bot: #d00000;
+      --rock-dark: #2b2d42;
+      --accent-yellow: #ffd166;
+      --accent-blue: #00b4d8;
+      --bg: #0b0914;
       --text: #ffffff;
     }
 
@@ -25,50 +26,58 @@
     body {
       margin: 0;
       padding: 16px;
-      background: radial-gradient(circle at center, #1f1f38 0%, var(--bg) 100%);
+      background: radial-gradient(circle at center, #1e1b38 0%, var(--bg) 100%);
       color: var(--text);
       font-family: 'Fredoka', sans-serif;
       min-height: 100vh;
     }
 
     header {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto 16px auto;
-      background: rgba(20, 20, 35, 0.9);
-      border: 3px solid var(--block-yellow);
-      border-radius: 18px;
-      padding: 12px 20px;
+      background: rgba(22, 20, 38, 0.9);
+      border: 3px solid var(--accent-yellow);
+      border-radius: 20px;
+      padding: 12px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.3);
     }
 
     .brand-title {
       font-family: 'Press Start 2P', monospace;
-      font-size: 16px;
-      color: var(--block-yellow);
-      letter-spacing: 1px;
+      font-size: 15px;
+      color: var(--accent-yellow);
       line-height: 1.4;
     }
 
-    .tag-sub {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 12px;
-      color: #90e0ef;
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .student-select {
+      background: #100e21;
+      border: 2px solid var(--accent-blue);
+      color: #fff;
       font-weight: 700;
-      margin-top: 4px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      outline: none;
     }
 
     .btn-cheese {
-      background: #ffd166;
+      background: linear-gradient(135deg, #ffd166, #ff9f1c);
       border: 2px solid #e09f3e;
-      color: #332000;
-      font-weight: 700;
+      color: #3d2200;
+      font-weight: 800;
       padding: 8px 14px;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 13px;
+      box-shadow: 0 4px 10px rgba(255, 159, 28, 0.35);
       transition: transform 0.1s ease;
     }
 
@@ -76,79 +85,82 @@
       transform: scale(0.92);
     }
 
+    /* Main Window */
     .game-window {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
-      background: #18192a;
-      border: 4px solid #3a3b5c;
-      border-radius: 24px;
+      background: #131224;
+      border: 4px solid #3d3b61;
+      border-radius: 26px;
       overflow: hidden;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
       position: relative;
     }
 
-    /* PARKOUR VIEW */
+    /* PARKOUR RUNNER STAGE */
     .parkour-stage {
-      height: 260px;
-      background: linear-gradient(180deg, #1b263b 0%, #0d1b2a 75%, #d90429 95%, #9b2226 100%);
+      height: 300px;
+      background: linear-gradient(180deg, #111d33 0%, #080f1d 65%, #6a040f 90%, #9d0208 100%);
       position: relative;
       overflow: hidden;
-      border-bottom: 4px solid #2b2d42;
+      border-bottom: 4px solid #332f4c;
     }
 
-    .lava-glow {
+    .lava-pool {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 14px;
-      background: #ff5400;
-      box-shadow: 0 -4px 15px #ff5400;
-      animation: lavaFlicker 1.5s infinite alternate;
-    }
-
-    @keyframes lavaFlicker {
-      0% { opacity: 0.8; }
-      100% { opacity: 1; }
-    }
-
-    /* Blocks & Character */
-    .platforms-track {
-      position: absolute;
-      bottom: 40px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      padding: 0 40px;
-    }
-
-    .block-step {
-      width: 70px;
       height: 24px;
-      border-radius: 6px;
-      border: 3px solid #000;
-      background: #4cc9f0;
-      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3);
-      position: relative;
+      background: linear-gradient(180deg, var(--lava-top), var(--lava-bot));
+      box-shadow: 0 -8px 25px #ff5400;
+      animation: lavaGlow 1.2s infinite alternate ease-in-out;
     }
 
-    .block-step.cleared {
-      background: #52b788;
+    @keyframes lavaGlow {
+      0% { opacity: 0.85; filter: brightness(1); }
+      100% { opacity: 1; filter: brightness(1.3); }
     }
 
-    .block-step.final {
+    /* Jagged Rock Platforms from the new drawing */
+    .platforms-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .rock-platform {
+      position: absolute;
+      width: 90px;
+      height: 32px;
+      background: #3a3854;
+      border: 2px solid #5a567f;
+      border-radius: 8px;
+      clip-path: polygon(10% 0%, 90% 5%, 100% 85%, 85% 100%, 15% 95%, 0% 80%);
+      box-shadow: 0 8px 0 #1e1d2e;
+      transition: background 0.3s;
+    }
+
+    .rock-platform.cleared {
+      background: #2b9348;
+      border-color: #55a630;
+      box-shadow: 0 8px 0 #1b4332;
+    }
+
+    .rock-platform.final {
       background: #ffd166;
       border-color: #ff9f1c;
+      box-shadow: 0 8px 0 #b27a00;
     }
 
-    #blockDude {
+    /* Human Runner Avatar */
+    #humanRunner {
       position: absolute;
-      bottom: 64px;
-      left: 60px;
-      width: 44px;
-      height: 56px;
-      transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), bottom 0.2s ease;
+      width: 48px;
+      height: 64px;
+      bottom: 95px;
+      left: 30px;
+      transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), bottom 0.35s ease;
       z-index: 10;
     }
 
@@ -157,77 +169,89 @@
     }
 
     @keyframes jumpArc {
-      0% { bottom: 64px; }
-      50% { bottom: 120px; }
-      100% { bottom: 64px; }
+      0% { bottom: 95px; }
+      50% { bottom: 170px; }
+      100% { bottom: 95px; }
+    }
+
+    /* Fall in lava animation from upgrade worksheet */
+    .falling-lava {
+      animation: lavaDrop 0.8s forwards cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+
+    @keyframes lavaDrop {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(120px) rotate(45deg); filter: brightness(1.5) drop-shadow(0 0 10px #ff5400); }
+      100% { transform: translateY(180px) rotate(90deg); opacity: 0; }
     }
 
     /* HUD Controls */
-    .hud-controls {
+    .hud-panel {
       padding: 24px 20px;
       text-align: center;
-      background: #141424;
+      background: #16152b;
     }
 
-    .step-indicator {
+    .stage-status {
       font-family: 'Press Start 2P', monospace;
       font-size: 13px;
-      color: #4cc9f0;
+      color: var(--accent-blue);
       margin-bottom: 12px;
     }
 
-    .sum-box {
+    .math-sum-box {
       font-family: 'Press Start 2P', monospace;
       font-size: 34px;
-      color: var(--block-yellow);
+      color: var(--accent-yellow);
       margin: 12px 0 16px 0;
       letter-spacing: 2px;
+      text-shadow: 0 0 12px rgba(255, 209, 102, 0.4);
     }
 
-    .input-row {
+    .input-group {
       display: flex;
       justify-content: center;
       gap: 12px;
     }
 
-    .math-input {
+    .in-box {
       width: 140px;
       font-family: 'Press Start 2P', monospace;
       font-size: 26px;
       text-align: center;
       padding: 10px;
-      background: #090a12;
-      border: 3px solid var(--block-blue);
+      background: #0a0915;
+      border: 3px solid var(--accent-blue);
       border-radius: 12px;
       color: #fff;
       outline: none;
     }
 
-    .btn-jump {
-      background: #52b788;
-      border: 3px solid #2d6a4f;
+    .btn-action {
+      background: #2ec4b6;
+      border: 3px solid #0f9f90;
       color: #fff;
       font-family: 'Press Start 2P', monospace;
-      font-size: 16px;
-      padding: 12px 20px;
+      font-size: 15px;
+      padding: 12px 22px;
       border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #1b4332;
+      box-shadow: 0 4px 0 #0b7267;
     }
 
-    .btn-jump:active {
+    .btn-action:active {
       transform: translateY(4px);
       box-shadow: none;
     }
 
-    .feedback-text {
+    .fb-text {
       min-height: 24px;
       margin-top: 14px;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 15px;
     }
 
-    /* BOSS D10 MODAL ARENA */
+    /* D10 BOSS SHOWDOWN ARENA */
     .boss-screen {
       display: none;
       padding: 28px 20px;
@@ -245,50 +269,50 @@
       to { transform: scale(1); opacity: 1; }
     }
 
-    .boss-title {
+    .boss-heading {
       font-family: 'Press Start 2P', monospace;
       color: #ff4d6d;
       font-size: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .dice-table {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 40px;
-      margin: 24px 0;
+      gap: 36px;
+      margin: 20px 0;
     }
 
     .dice-card {
       background: rgba(255, 255, 255, 0.05);
       border: 3px solid #4a192c;
       border-radius: 18px;
-      padding: 18px 24px;
+      padding: 16px 20px;
       width: 170px;
       text-align: center;
     }
 
-    .dice-val {
+    .dice-num {
       font-family: 'Press Start 2P', monospace;
       font-size: 46px;
-      margin: 14px 0;
+      margin: 12px 0;
       color: #ffd166;
     }
 
-    .btn-roll {
+    .btn-roll-dice {
       background: #ff4d6d;
       color: #fff;
       font-family: 'Press Start 2P', monospace;
-      font-size: 16px;
-      padding: 16px 28px;
+      font-size: 15px;
+      padding: 14px 28px;
       border: 3px solid #800f2f;
-      border-radius: 16px;
+      border-radius: 14px;
       cursor: pointer;
       box-shadow: 0 6px 0 #590d22;
     }
 
-    .btn-roll:active {
+    .btn-roll-dice:active {
       transform: translateY(6px);
       box-shadow: none;
     }
@@ -299,157 +323,227 @@
   <header>
     <div>
       <div class="brand-title">BAD MATH GAME</div>
-      <div class="tag-sub">Lukas &amp; Harrison &bull; Parkour Obby &amp; D10 Boss Fight</div>
+      <div style="font-size: 12px; color: #90e0ef; font-weight: 700; margin-top: 3px;">
+        Realistic Jagged Obby &bull; Lava Pit Fall &bull; D10 Boss
+      </div>
     </div>
-    <!-- Press Cheese to Leave from their drawing -->
-    <button class="btn-cheese" onclick="pressCheese()">&#129472; Press Cheese to Leave</button>
+
+    <div class="header-actions">
+      <select class="student-select" id="studentSelector" onchange="switchStudent(this.value)">
+        <option value="1">Student 1</option>
+        <option value="2">Student 2</option>
+        <option value="3">Student 3</option>
+        <option value="4">Student 4</option>
+        <option value="5">Student 5</option>
+        <option value="6">Student 6</option>
+      </select>
+      <!-- Cheese button with upgraded benefits -->
+      <button class="btn-cheese" onclick="useCheese()">&#129472; Cheese Buff</button>
+    </div>
   </header>
 
   <div class="game-window">
     
-    <!-- STAGE 1: PARKOUR OBBY -->
+    <!-- STAGE 1: REALISTIC JAGGED PARKOUR OBBY -->
     <div id="parkourView">
-      <div class="parkour-stage">
-        <!-- SVG Roblox Character -->
-        <div id="blockDude">
-          <svg viewBox="0 0 50 64" width="44" height="56">
-            <!-- Head -->
-            <rect x="15" y="4" width="20" height="18" rx="3" fill="#ffb703" stroke="#000" stroke-width="2"/>
-            <rect x="19" y="10" width="3" height="4" fill="#000"/>
-            <rect x="28" y="10" width="3" height="4" fill="#000"/>
-            <!-- Torso (Classic Blue Block Shirt) -->
-            <rect x="11" y="24" width="28" height="22" rx="2" fill="#0077b6" stroke="#000" stroke-width="2"/>
-            <!-- Left & Right Arm -->
-            <rect x="3" y="24" width="7" height="20" rx="2" fill="#ffb703" stroke="#000" stroke-width="2"/>
-            <rect x="40" y="24" width="7" height="20" rx="2" fill="#ffb703" stroke="#000" stroke-width="2"/>
-            <!-- Legs (Green Pants) -->
-            <rect x="13" y="48" width="10" height="14" rx="2" fill="#52b788" stroke="#000" stroke-width="2"/>
-            <rect x="27" y="48" width="10" height="14" rx="2" fill="#52b788" stroke="#000" stroke-width="2"/>
+      <div class="parkour-stage" id="stageTrack">
+        
+        <!-- Human Runner Avatar (Replaced Robloxian) -->
+        <div id="humanRunner">
+          <svg viewBox="0 0 50 68" width="48" height="64">
+            <!-- Head & Face -->
+            <ellipse cx="25" cy="14" rx="9" ry="10" fill="#f1c27d" stroke="#111" stroke-width="2"/>
+            <path d="M 16 12 Q 25 2 34 12" fill="#5c3d2e" stroke="#111" stroke-width="2"/>
+            <!-- Eyes -->
+            <circle cx="28" cy="14" r="1.5" fill="#111"/>
+            <circle cx="21" cy="14" r="1.5" fill="#111"/>
+            <!-- Torso (Athletic Parkour Vest) -->
+            <path d="M 17 24 L 33 24 L 31 44 L 19 44 Z" fill="#e63946" stroke="#111" stroke-width="2"/>
+            <!-- Running Arms -->
+            <path d="M 17 26 L 8 36" stroke="#f1c27d" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 33 26 L 42 34" stroke="#f1c27d" stroke-width="4" stroke-linecap="round"/>
+            <!-- Running Legs & Sneakers -->
+            <path d="M 21 44 L 14 58 L 9 58" stroke="#1d3557" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 29 44 L 36 58 L 41 58" stroke="#1d3557" stroke-width="4" stroke-linecap="round"/>
+            <rect x="7" y="56" width="6" height="4" rx="1" fill="#fff"/>
+            <rect x="38" y="56" width="6" height="4" rx="1" fill="#fff"/>
           </svg>
         </div>
 
-        <!-- 5 Parkour Blocks -->
-        <div class="platforms-track">
-          <div class="block-step cleared" id="step-0"></div>
-          <div class="block-step" id="step-1"></div>
-          <div class="block-step" id="step-2"></div>
-          <div class="block-step" id="step-3"></div>
-          <div class="block-step final" id="step-4">👑</div>
+        <!-- 5 Jagged Floating Rocks from sketch -->
+        <div class="platforms-container">
+          <div class="rock-platform cleared" style="bottom: 60px; left: 20px;" id="rock-0"></div>
+          <div class="rock-platform" style="bottom: 75px; left: 200px;" id="rock-1"></div>
+          <div class="rock-platform" style="bottom: 90px; left: 390px;" id="rock-2"></div>
+          <div class="rock-platform" style="bottom: 70px; left: 580px;" id="rock-3"></div>
+          <div class="rock-platform final" style="bottom: 85px; left: 770px;" id="rock-4">
+            <span style="position: absolute; top: -20px; left: 35px; font-size: 16px;">👑</span>
+          </div>
         </div>
 
-        <div class="lava-glow"></div>
+        <!-- Lava Pool -->
+        <div class="lava-pool"></div>
       </div>
 
-      <div class="hud-controls">
-        <div class="step-indicator" id="jumpStatus">STAGE: JUMP 1 / 4 (DO SUMS TO JUMP)</div>
-        <div class="sum-box" id="sumDisplay">12 + 8 = ?</div>
+      <div class="hud-panel">
+        <div class="stage-status" id="stageStatus">STAGE: JUMP 1 / 4 (DO HARD MATHS TO LEAP)</div>
+        <div class="math-sum-box" id="sumDisplay">45 + 38 = ?</div>
 
-        <div class="input-row">
-          <input type="number" id="sumInput" class="math-input" autocomplete="off" placeholder="?">
-          <button class="btn-jump" onclick="tryJump()">JUMP!</button>
+        <div class="input-group">
+          <input type="number" id="mathIn" class="in-box" autocomplete="off" placeholder="?">
+          <button class="btn-action" onclick="makeJump()">LEAP!</button>
         </div>
 
-        <div class="feedback-text" id="feedback"></div>
+        <div class="fb-text" id="fbMessage"></div>
       </div>
     </div>
 
     <!-- STAGE 2: D10 DICE THROW BOSS SCREEN -->
     <div class="boss-screen" id="bossView">
-      <div class="boss-title">⚔️ FINAL BOSS: D10 DICE THROW ⚔️</div>
-      <p style="color: #ffb4a2; font-size: 15px; margin-top: -10px;">Highest number on the D10 wins!</p>
+      <div class="boss-heading">⚔️ FINAL BOSS: D10 DICE THROW ⚔️</div>
+      <p style="color: #ffb4a2; font-size: 14px; margin-top: -6px;">Highest number rolled on the D10 wins the game!</p>
 
       <div class="dice-table">
         <div class="dice-card">
-          <div style="font-size: 13px; color: #4cc9f0; font-weight: 700;">PLAYER ROLL</div>
-          <div class="dice-val" id="playerDice">?</div>
-          <div style="font-size: 11px; color: #888;">10-Sided Die</div>
+          <div style="font-size: 12px; color: var(--accent-blue); font-weight: 700;">PLAYER ROLL</div>
+          <div class="dice-num" id="pDice">?</div>
+          <div style="font-size: 11px; color: #888;">D10 Die</div>
         </div>
 
         <div style="font-family: 'Press Start 2P', monospace; font-size: 22px; color: #ff4d6d;">VS</div>
 
         <div class="dice-card">
-          <div style="font-size: 13px; color: #ff758f; font-weight: 700;">BOSS ROLL</div>
-          <div class="dice-val" id="bossDice">?</div>
-          <div style="font-size: 11px; color: #888;">10-Sided Die</div>
+          <div style="font-size: 12px; color: #ff758f; font-weight: 700;">BOSS ROLL</div>
+          <div class="dice-num" id="bDice">?</div>
+          <div style="font-size: 11px; color: #888;">D10 Die</div>
         </div>
       </div>
 
-      <button class="btn-roll" id="rollBtn" onclick="rollD10()">ROLL D10 DICE!</button>
-      <div class="feedback-text" id="bossFeedback" style="font-size: 17px; margin-top: 18px;"></div>
+      <button class="btn-roll-dice" id="rollDiceBtn" onclick="rollD10()">ROLL D10 DICE!</button>
+      <div class="fb-text" id="bossFb" style="font-size: 16px; margin-top: 18px;"></div>
     </div>
 
   </div>
 
   <script>
-    let currentStep = 0; // 0 to 4
+    let currentStep = 0;
     const totalSteps = 4;
-    let expectedSum = 0;
+    let expectedAnswer = 0;
+    let hasCheeseBuff = false;
 
-    // Positions for dude on the 5 blocks
-    const dudePositions = [60, 240, 420, 600, 780];
+    // Platform positions & elevations for realistic jumps
+    const rockPositions = [
+      { left: 30, bottom: 95 },
+      { left: 210, bottom: 110 },
+      { left: 400, bottom: 125 },
+      { left: 590, bottom: 105 },
+      { left: 780, bottom: 120 }
+    ];
 
-    function pressCheese() {
-      alert("🧀 Cheese Pressed! (As drawn on Lukas & Harrison's screen: 'Press cheese to leave' / 'help me')");
+    function switchStudent(val) {
+      alert(`Loaded profile for Student ${val}!`);
+      resetParkour();
     }
 
-    function generateSum() {
-      // Mixed Year 3 math: addition, subtraction, or times tables
+    function useCheese() {
+      hasCheeseBuff = true;
+      alert("🧀 Cheese buff activated! The cheese powers your next leap with a safety bounce!");
+    }
+
+    // Harder Year 3 Math Sums
+    function generateHardSum() {
       const type = Math.floor(Math.random() * 3);
-      let n1, n2;
+      let a, b;
 
       if (type === 0) {
-        // Addition
-        n1 = Math.floor(Math.random() * 40) + 10;
-        n2 = Math.floor(Math.random() * 30) + 5;
-        expectedSum = n1 + n2;
-        document.getElementById('sumDisplay').textContent = `${n1} + ${n2} = ?`;
+        // Multi-digit addition with carry
+        a = Math.floor(Math.random() * 45) + 25;
+        b = Math.floor(Math.random() * 38) + 16;
+        expectedAnswer = a + b;
+        document.getElementById('sumDisplay').textContent = `${a} + ${b} = ?`;
       } else if (type === 1) {
-        // Subtraction
-        n1 = Math.floor(Math.random() * 50) + 20;
-        n2 = Math.floor(Math.random() * (n1 - 10)) + 5;
-        expectedSum = n1 - n2;
-        document.getElementById('sumDisplay').textContent = `${n1} - ${n2} = ?`;
+        // Subtraction with regrouping
+        a = Math.floor(Math.random() * 55) + 35;
+        b = Math.floor(Math.random() * 25) + 12;
+        expectedAnswer = a - b;
+        document.getElementById('sumDisplay').textContent = `${a} - ${b} = ?`;
       } else {
-        // Times tables
-        n1 = Math.floor(Math.random() * 8) + 2;
-        n2 = Math.floor(Math.random() * 10) + 1;
-        expectedSum = n1 * n2;
-        document.getElementById('sumDisplay').textContent = `${n1} × ${n2} = ?`;
+        // Challenging times tables (3, 4, 6, 7, 8, 9, 12)
+        const tables = [3, 4, 6, 7, 8, 9, 12];
+        a = tables[Math.floor(Math.random() * tables.length)];
+        b = Math.floor(Math.random() * 8) + 3;
+        expectedAnswer = a * b;
+        document.getElementById('sumDisplay').textContent = `${a} × ${b} = ?`;
       }
     }
 
-    function tryJump() {
-      const val = parseInt(document.getElementById('sumInput').value, 10);
-      const fb = document.getElementById('feedback');
-      const dude = document.getElementById('blockDude');
+    function makeJump() {
+      const val = parseInt(document.getElementById('mathIn').value, 10);
+      const fb = document.getElementById('fbMessage');
+      const runner = document.getElementById('humanRunner');
 
       if (isNaN(val)) return;
 
-      if (val === expectedSum) {
+      if (val === expectedAnswer) {
         currentStep++;
-        dude.classList.add('jumping');
-        dude.style.left = `${dudePositions[currentStep]}px`;
+        runner.classList.add('jumping');
+        runner.style.left = `${rockPositions[currentStep].left}px`;
+        runner.style.bottom = `${rockPositions[currentStep].bottom}px`;
 
-        document.getElementById(`step-${currentStep}`).classList.add('cleared');
-        fb.style.color = '#52b788';
-        fb.textContent = 'Awesome jump! Parkour block cleared!';
+        document.getElementById(`rock-${currentStep}`).classList.add('cleared');
+        fb.style.color = '#2ec4b6';
+        fb.textContent = '🌟 AWESOME LEAP! Platform cleared!';
 
         setTimeout(() => {
-          dude.classList.remove('jumping');
+          runner.classList.remove('jumping');
           if (currentStep >= totalSteps) {
             triggerBossBattle();
           } else {
-            document.getElementById('jumpStatus').textContent = `STAGE: JUMP ${currentStep + 1} / 4 (DO SUMS TO JUMP)`;
-            document.getElementById('sumInput').value = '';
-            generateSum();
+            document.getElementById('stageStatus').textContent = `STAGE: JUMP ${currentStep + 1} / 4 (DO HARD MATHS TO LEAP)`;
+            document.getElementById('mathIn').value = '';
+            generateHardSum();
           }
         }, 400);
       } else {
+        // Fall into lava mechanic from worksheet
+        if (hasCheeseBuff) {
+          hasCheeseBuff = false;
+          fb.style.color = '#ffd166';
+          fb.textContent = `🧀 The Cheese Buff saved you from the lava! (Answer was: ${expectedAnswer})`;
+          document.getElementById('mathIn').value = '';
+          generateHardSum();
+          return;
+        }
+
         fb.style.color = '#ff4d6d';
-        fb.textContent = `Missed jump! (Answer was ${expectedSum}) - Try again!`;
-        document.getElementById('sumInput').value = '';
-        generateSum();
+        fb.textContent = `🔥 MISSED JUMP! Fell into the lava! (Answer: ${expectedAnswer})`;
+        runner.classList.add('falling-lava');
+
+        setTimeout(() => {
+          runner.classList.remove('falling-lava');
+          // Respawn on previous cleared rock
+          runner.style.left = `${rockPositions[currentStep].left}px`;
+          runner.style.bottom = `${rockPositions[currentStep].bottom}px`;
+          document.getElementById('mathIn').value = '';
+          generateHardSum();
+        }, 850);
       }
+    }
+
+    function resetParkour() {
+      currentStep = 0;
+      const runner = document.getElementById('humanRunner');
+      runner.style.left = `${rockPositions[0].left}px`;
+      runner.style.bottom = `${rockPositions[0].bottom}px`;
+
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`rock-${i}`).classList.remove('cleared');
+      }
+      document.getElementById('parkourView').style.display = 'block';
+      document.getElementById('bossView').classList.remove('active');
+      document.getElementById('stageStatus').textContent = `STAGE: JUMP 1 / 4 (DO HARD MATHS TO LEAP)`;
+      document.getElementById('mathIn').value = '';
+      generateHardSum();
     }
 
     function triggerBossBattle() {
@@ -458,50 +552,49 @@
     }
 
     function rollD10() {
-      const btn = document.getElementById('rollBtn');
+      const btn = document.getElementById('rollDiceBtn');
       btn.disabled = true;
-      const fb = document.getElementById('bossFeedback');
-      fb.textContent = "Rolling D10 against the Boss...";
+      const fb = document.getElementById('bossFb');
+      fb.textContent = "Rolling 10-sided dice against the Boss...";
 
-      // D10 rolls 1 to 10
-      let ticks = 0;
-      const interval = setInterval(() => {
-        document.getElementById('playerDice').textContent = Math.floor(Math.random() * 10) + 1;
-        document.getElementById('bossDice').textContent = Math.floor(Math.random() * 10) + 1;
-        ticks++;
+      let rolls = 0;
+      const timer = setInterval(() => {
+        document.getElementById('pDice').textContent = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('bDice').textContent = Math.floor(Math.random() * 10) + 1;
+        rolls++;
 
-        if (ticks > 12) {
-          clearInterval(interval);
-          const pRoll = Math.floor(Math.random() * 10) + 1;
-          const bRoll = Math.floor(Math.random() * 10) + 1;
+        if (rolls > 12) {
+          clearInterval(timer);
+          const p = Math.floor(Math.random() * 10) + 1;
+          const b = Math.floor(Math.random() * 10) + 1;
 
-          document.getElementById('playerDice').textContent = pRoll;
-          document.getElementById('bossDice').textContent = bRoll;
+          document.getElementById('pDice').textContent = p;
+          document.getElementById('bDice').textContent = b;
 
-          if (pRoll > bRoll) {
-            fb.style.color = '#52b788';
-            fb.textContent = `🎉 VICTORY! Your ${pRoll} beat the Boss's ${bRoll}! You completed Bad Math Game!`;
+          if (p > b) {
+            fb.style.color = '#2ec4b6';
+            fb.textContent = `🎉 VICTORY! Your ${p} beat the Boss's ${b}! Obby conquered!`;
             btn.textContent = "PLAY AGAIN";
             btn.disabled = false;
-            btn.onclick = () => location.reload();
-          } else if (pRoll < bRoll) {
+            btn.onclick = () => resetParkour();
+          } else if (p < b) {
             fb.style.color = '#ff4d6d';
-            fb.textContent = `💀 The Boss rolled ${bRoll} and beat your ${pRoll}! Roll again!`;
+            fb.textContent = `💀 The Boss rolled ${b} and beat your ${p}! Try again!`;
             btn.disabled = false;
           } else {
             fb.style.color = '#ffd166';
-            fb.textContent = `TIE at ${pRoll}! Roll again for the win!`;
+            fb.textContent = `Tie roll at ${p}! Roll again for victory!`;
             btn.disabled = false;
           }
         }
       }, 70);
     }
 
-    document.getElementById('sumInput').addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') tryJump();
+    document.getElementById('mathIn').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') makeJump();
     });
 
-    generateSum();
+    generateHardSum();
   </script>
 </body>
 </html>
